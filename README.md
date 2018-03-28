@@ -1,4 +1,4 @@
-# dhistory
+# dhistory ![](https://api.travis-ci.org/evilmarty/dhistory.svg?branch=master)
 
 Dispatches actions on history state changes (ie. push state or navigate).
 
