@@ -2,6 +2,7 @@
   "name": "dhistory",
   "version": "1.0.0",
   "description": "Dispatches actions on history state changes (ie. push state or navigate).",
+  "readme": "README.md",
   "main": "modules/index.js",
   "repository": "https://github.com/evilmarty/dhistory",
   "author": "Marty Zalega",
