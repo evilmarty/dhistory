@@ -9,6 +9,14 @@
   "author": "Marty Zalega",
   "license": "MIT",
   "private": false,
+  "keywords": [
+    "redux",
+    "history",
+    "route",
+    "router",
+    "routing",
+    "navigate"
+  ],
   "files": [
     "lib",
     "modules"
