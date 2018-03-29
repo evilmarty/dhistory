@@ -10,6 +10,8 @@ script:
 branches:
   only:
   - master
+before_deploy:
+  - yarn build:cjs
 deploy:
   provider: npm
   email: marty@zalega.me
