@@ -1,8 +1,12 @@
 sudo: false
 language: node_js
 node_js:
-- node
-- "9"
+- "8"
+before_script:
+  - yarn build:cjs
+script:
+  - yarn test
+  - yarn test:cjs
 branches:
   only:
   - master

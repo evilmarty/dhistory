@@ -1,15 +1,22 @@
 {
   "name": "dhistory",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Dispatches actions on history state changes (ie. push state or navigate).",
   "readme": "README.md",
-  "main": "modules/index.js",
+  "main": "lib/index.js",
+  "module": "modules/index.js",
   "repository": "https://github.com/evilmarty/dhistory",
   "author": "Marty Zalega",
   "license": "MIT",
   "private": false,
+  "files": [
+    "lib",
+    "modules"
+  ],
   "scripts": {
-    "test": "mocha --recursive --require babel-register modules/"
+    "build:cjs": "babel modules --out-dir lib",
+    "test": "mocha --recursive --require babel-register modules/",
+    "test:cjs": "mocha --recursive lib/"
   },
   "dependencies": {
     "history": "^4.7.2",
