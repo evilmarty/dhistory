@@ -36,7 +36,8 @@ const actionFor = (patterns, lookup) => (path, options = DEFAULT_MATCH_PATH_OPTI
 
 const pathFor = lookup => action => {
   const pattern = lookup[action.type];
-  const { type, ...params } = action;
+  const keys = Object.keys(action).filter(key => key !== 'type');
+  const params = keys.reduce((memo, key) => Object.assign(memo, { [key]: action[key] }), {});
 
   return pattern ? generatePath(pattern, params) : null;
 };
