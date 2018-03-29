@@ -30,6 +30,9 @@
     "history": "^4.7.2",
     "path-to-regexp": "^2.2.0"
   },
+  "peerDependencies": {
+    "redux": "^3.7.2"
+  },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
