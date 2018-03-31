@@ -51,32 +51,40 @@ export default history => routes => {
     return action ? newAction(action, match.params) : null;
   };
 
-  return store => {
-    let bypassUpdate = false;
+  return createStore => (...args) => {
+    const actionForCurrencyPath = actionFor(history.location.pathname);
+    const store = createStore(...args);
+    const dispatch = (action, ...args) => {
+      const result = store.dispatch(action, ...args);
+      const path = pathFor(action);
+
+      if (path !== null) {
+        history[action.replace ? 'replace' : 'push'](path);
+      }
+
+      return result;
+    };
+
+    store.dispatch(actionForCurrencyPath);
 
     history.listen(location => {
       const action = actionFor(location.pathname);
 
       if (action) {
-        try {
-          bypassUpdate = true;
-          store.dispatch(action);
-        } finally {
-          bypassUpdate = false;
-        }
+        store.dispatch(action);
       }
     });
 
-    return next => action => {
-      if (!bypassUpdate) {
-        const path = pathFor(action);
+    return {
+      ...store,
 
-        if (path !== null) {
-          history[action.replace ? 'replace' : 'push'](path);
-        }
+      dispatch,
+      pathFor,
+      actionFor,
+
+      get location() {
+        return history.location;
       }
-
-      next(action);
     };
   };
 };

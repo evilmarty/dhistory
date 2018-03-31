@@ -44,7 +44,7 @@ describe('middleware', () => {
     });
   });
 
-  describe('store integration', () => {
+  describe('store enhancer', () => {
     const reducer = (state = {}, action) => {
       lastAction = action;
       return state;
@@ -59,7 +59,15 @@ describe('middleware', () => {
     beforeEach(() => {
       lastAction = null;
       history = createHistory();
-      store = createStore(reducer, applyMiddleware(middleware(history)(routes)));
+      store = createStore(reducer, middleware(history)(routes));
+    });
+
+    it('adds "location" helper property', () => {
+      expect(store).toHaveProperty('location', history.location);
+    });
+
+    it('dispatches action when store is created', () => {
+      expect(lastAction).toEqual({ type: 'VIEW_HOME' });
     });
 
     it('dispatches action when history state changes', () => {
@@ -84,8 +92,9 @@ describe('middleware', () => {
     });
 
     it('does not dispatch action for unknown history location', () => {
+      const previousAction = lastAction;
       history.push('/unknown');
-      expect(lastAction).toEqual({ type: '@@redux/INIT' });
+      expect(lastAction).toEqual(previousAction);
     });
   });
 });

@@ -21,7 +21,7 @@ yarn add dhistory
 Define routes and connect to your store:
 
 ```javascript
-import { createStore, applyMiddleware } from 'redux';
+import { createStore } from 'redux';
 import { createBrowserHistory } from 'dhistory';
 
 const routes = {
@@ -29,7 +29,13 @@ const routes = {
   '/posts': 'VIEW_POSTS',
   '/': 'VIEW_HOME',
 };
-const store = createStore(reducers, applyMiddleware(createBrowserHistory(routes)));
+const store = createStore(reducers, createBrowserHistory(routes));
+```
+
+**Note** You must not include dhistory in `applyMiddleware`, otherwise you will not receive the initial dispatch for the current pathname. You may pass middleware alongside it like so:
+
+```javascript
+const store = createStore(reducers, createBrowserHistory(routes)(applyMiddleware(...)));
 ```
 
 Inside your reducer:
@@ -87,7 +93,7 @@ function NewPostView({ store }) {
 Example with dhistory:
 
 ```javascript
-import { createStore, applyMiddleware } from 'redux';
+import { createStore } from 'redux';
 import { createBrowserHistory } from 'dhistory';
 
 function createPost(data) {
@@ -99,7 +105,7 @@ const routes = {
   '/posts/:id': 'VIEW_POST',
 }
 
-const store = createStore(reducers, applyMiddleware(createBrowserHistory(routes)));
+const store = createStore(reducers, createBrowserHistory(routes));
 
 function reducer(state, action) {
   switch (action.type) {
