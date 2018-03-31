@@ -1,6 +1,12 @@
 import _createBrowserHistory from './createBrowserHistory';
 export { _createBrowserHistory as createBrowserHistory };
+import _composeWithBrowserHistory from './composeWithBrowserHistory';
+export { _composeWithBrowserHistory as composeWithBrowserHistory };
 import _createMemoryHistory from './createMemoryHistory';
 export { _createMemoryHistory as createMemoryHistory };
+import _composeWithMemoryHistory from './composeWithMemoryHistory';
+export { _composeWithMemoryHistory as composeWithMemoryHistory };
 import _createHashHistory from './createHashHistory';
 export { _createHashHistory as createHashHistory };
+import _composeWithHashHistory from './composeWithHashHistory';
+export { _composeWithHashHistory as composeWithHashHistory };

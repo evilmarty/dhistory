@@ -35,7 +35,8 @@ const store = createStore(reducers, createBrowserHistory(routes));
 **Note** You must not include dhistory in `applyMiddleware`, otherwise you will not receive the initial dispatch for the current pathname. You may pass middleware alongside it like so:
 
 ```javascript
-const store = createStore(reducers, createBrowserHistory(routes)(applyMiddleware(...)));
+import { composeWithBrowserHistory } from 'dhistory';
+const store = createStore(reducers, composeWithBrowserHistory(routes)(applyMiddleware(...)));
 ```
 
 Inside your reducer:
@@ -142,13 +143,29 @@ Returns a router object.
 - routes - A routes object. Keys are patterns and values are either the action name or an action object.
 - options - Options for browser history. Read ReactTraining's [history](https://github.com/ReactTraining/history#usage) package for more info.
 
-Returns a function to be added to your store's middleware.
+Returns a function to be passed to `createStore`.
 
 ```javascript
 const routes = {
   '/posts/:id': { type: 'VIEW_POST', extra: 'data' },
   '/posts': 'VIEW_POSTS',
 }
+
+const store = createStore(reducer, createBrowserHistory(routes));
+```
+
+## `composeWithBrowserHistory(routes, options)` and `composeWithMemoryHistory(routes, options)` and `composeWithHashHistory(routes, options)`
+
+Same as above but to be used when additional enhancements or middleware.
+
+#### Parameters
+- routes - A routes object. Keys are patterns and values are either the action name or an action object.
+- options - Options for browser history. Read ReactTraining's [history](https://github.com/ReactTraining/history#usage) package for more info.
+
+Returns a compose function to extend the enhancement. ie. add middleware etc.
+
+```javascript
+composeWithBrowserHistory(routes, options)(applyMiddleware(...));
 ```
 
 ## Attribution

@@ -1,6 +1,6 @@
 import expect from 'expect';
 import createHistory from 'history/createMemoryHistory';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore } from 'redux';
 import enhancer from '../enhancer';
 
 describe('enhancer', () => {
