@@ -58,9 +58,12 @@ export default history => routes => {
       const action = actionFor(location.pathname);
 
       if (action) {
-        bypassUpdate = true;
-        store.dispatch(action);
-        bypassUpdate = false;
+        try {
+          bypassUpdate = true;
+          store.dispatch(action);
+        } finally {
+          bypassUpdate = false;
+        }
       }
     });
 
