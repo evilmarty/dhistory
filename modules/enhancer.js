@@ -75,9 +75,7 @@ export default history => routes => {
       }
     });
 
-    return {
-      ...store,
-
+    return Object.assign({}, store, {
       dispatch,
       pathFor,
       actionFor,
@@ -85,6 +83,6 @@ export default history => routes => {
       get location() {
         return history.location;
       }
-    };
+    });
   };
 };
