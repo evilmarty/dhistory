@@ -62,10 +62,6 @@ describe('enhancer', () => {
       store = createStore(reducer, applyMiddleware(middleware(history)(routes)));
     });
 
-    it('dispatches action when store is created', () => {
-      expect(lastAction).toEqual({ type: 'VIEW_HOME' });
-    });
-
     it('dispatches action when history state changes', () => {
       history.push('/posts');
       expect(lastAction).toEqual({ type: 'VIEW_POSTS' });

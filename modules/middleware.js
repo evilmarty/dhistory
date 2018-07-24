@@ -52,9 +52,6 @@ export default history => routes => {
   };
 
   return ({ dispatch, getState }) => {
-    const actionForCurrencyPath = actionFor(history.location.pathname);
-    dispatch(actionForCurrencyPath);
-
     history.listen(location => {
       const action = actionFor(location.pathname);
 
