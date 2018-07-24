@@ -19,7 +19,7 @@ function normaliseAction(action) {
 }
 
 function newAction(action, params = {}) {
-  return { ...action, ...params };
+  return Object.assign({}, action, params);
 }
 
 function findPattern(patterns, path, { strict, exact, sensitive }) {
