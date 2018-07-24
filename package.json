@@ -1,6 +1,6 @@
 {
   "name": "dhistory",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Dispatches actions on history state changes (ie. push state or navigate).",
   "readme": "README.md",
   "main": "lib/index.js",

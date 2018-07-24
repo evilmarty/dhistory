@@ -5,4 +5,4 @@ export { _createMemoryHistory as createMemoryHistory };
 import _createHashHistory from './createHashHistory';
 export { _createHashHistory as createHashHistory };
 import _middleware from './middleware';
-export { _middleware as default };
+export default _middleware;
