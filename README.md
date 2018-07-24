@@ -21,7 +21,7 @@ yarn add dhistory
 Define routes and connect to your store:
 
 ```javascript
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { createBrowserHistory } from 'dhistory';
 
 const routes = {
@@ -29,20 +29,8 @@ const routes = {
   '/posts': 'VIEW_POSTS',
   '/': 'VIEW_HOME',
 };
-const store = createStore(reducers, createBrowserHistory(routes));
-```
 
-**Note** You must not include dhistory in `applyMiddleware`, otherwise you will not receive the initial dispatch for the current pathname. You may pass middleware alongside it like so:
-
-```javascript
-import { composeWithBrowserHistory } from 'dhistory';
-const store = createStore(reducers, composeWithBrowserHistory(routes)(applyMiddleware(...)));
-```
-
-Inside your reducer:
-
-```javascript
-function reducer(state, action) {
+const reducer = (state, action) => {
   switch (action.type) {
     case 'VIEW_POST':
       return { ...state, post_id: action.id, view: 'POST' };
@@ -52,8 +40,12 @@ function reducer(state, action) {
       return { ...state, view: 'HOME' };
     ...
   }
-}
+};
+
+const store = createStore(reducers, applyMiddleware(createBrowserHistory(routes)));
 ```
+
+Your store will now receive actions defined in `routes` when the browser's history changes. For example, when the URL changes to `/posts/123` the action `VIEW_POST` will be dispatched with the param `id: 123`.
 
 To navigate simply dispatch the action, along with any parameters, as you normally would in your Redux app:
 
@@ -61,24 +53,25 @@ To navigate simply dispatch the action, along with any parameters, as you normal
 dispatch({ type: 'VIEW_POST', id: 1 });
 ```
 
-Which will update the location to `/posts/1` and dispatch the action. If the path changes outside your application then dhistory will dispatch the same action.
+Which will update the location to `/posts/1` and dispatch the action.
 
 ## Motivation
 
 There are many routers and history management libraries but none of them seem to truly fitted with Redux. Navigations don't match with actions or follow the same flow and are treated separate from everything else.
 
-Example with React Router:
+Example:
 
 ```javascript
 import { Router, Route } from 'react-router';
 
 <Router>
   <Route to="/post/new" component={NewPostView}/>
+  <Route to="/post/:id" component={PostView}/>
 </Router>
 
 function createPost(data) {
-  // some logic to create post
-  history.push(`/posts/${post.id}`);
+  // dhistory will update the history for us, otherwise we'd have to manually update it:
+  // ie. history.push(`/posts/${post.id}`);
   return { type: 'POST_CREATED', post };
 }
 
@@ -88,48 +81,6 @@ function NewPostView({ store }) {
       ...
     </PostForm>
   );
-}
-```
-
-Example with dhistory:
-
-```javascript
-import { createStore } from 'redux';
-import { createBrowserHistory } from 'dhistory';
-
-function createPost(data) {
-  // some logic to create post
-  return { type: 'VIEW_POST', id: post.id };
-}
-
-const routes = {
-  '/posts/:id': 'VIEW_POST',
-}
-
-const store = createStore(reducers, createBrowserHistory(routes));
-
-function reducer(state, action) {
-  switch (action.type) {
-    // This is called when the action is dispatched or when the URL is changed
-    case 'VIEW_POST':
-      return { ...state, view: 'POST' };
-  }
-}
-
-function NewPostView({ store }) {
-  return (
-    <PostForm onSubmit={data => store.dispatch(createPost(data))}>
-      ...
-    </PostForm>
-  );
-}
-
-function Main({ view }) {
-  switch (view) {
-    case 'POST':
-      return <NewPostView/>;
-    ...
-  }
 }
 ```
 
@@ -143,30 +94,7 @@ Returns a router object.
 - routes - A routes object. Keys are patterns and values are either the action name or an action object.
 - options - Options for browser history. Read ReactTraining's [history](https://github.com/ReactTraining/history#usage) package for more info.
 
-Returns a function to be passed to `createStore`.
-
-```javascript
-const routes = {
-  '/posts/:id': { type: 'VIEW_POST', extra: 'data' },
-  '/posts': 'VIEW_POSTS',
-}
-
-const store = createStore(reducer, createBrowserHistory(routes));
-```
-
-## `composeWithBrowserHistory(routes, options)` and `composeWithMemoryHistory(routes, options)` and `composeWithHashHistory(routes, options)`
-
-Same as above but to be used when additional enhancements or middleware.
-
-#### Parameters
-- routes - A routes object. Keys are patterns and values are either the action name or an action object.
-- options - Options for browser history. Read ReactTraining's [history](https://github.com/ReactTraining/history#usage) package for more info.
-
-Returns a compose function to extend the enhancement. ie. add middleware etc.
-
-```javascript
-composeWithBrowserHistory(routes, options)(applyMiddleware(...));
-```
+Returns a function to be passed to `applyMiddleware`.
 
 ## Attribution
 

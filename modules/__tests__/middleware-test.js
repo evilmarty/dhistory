@@ -1,7 +1,7 @@
 import expect from 'expect';
 import createHistory from 'history/createMemoryHistory';
-import { createStore } from 'redux';
-import enhancer from '../enhancer';
+import { createStore, applyMiddleware } from 'redux';
+import middleware from '../middleware';
 
 describe('enhancer', () => {
   describe('passing routes', () => {
@@ -16,7 +16,7 @@ describe('enhancer', () => {
         '/foo': 'FOO',
         '/foo/:bar': 'FOOBAR',
       };
-      expect(enhancer(history)(routes)).toBeInstanceOf(Function);
+      expect(middleware(history)(routes)).toBeInstanceOf(Function);
     });
 
     it('accepts routes with objects as objects', () => {
@@ -24,7 +24,7 @@ describe('enhancer', () => {
         '/foo': { type: 'FOO' },
         '/foo/:bar': { type: 'FOOBAR' },
       };
-      expect(enhancer(history)(routes)).toBeInstanceOf(Function);
+      expect(middleware(history)(routes)).toBeInstanceOf(Function);
     });
 
     it('throws a type error when routes contains an object without a "type" property', () => {
@@ -32,14 +32,14 @@ describe('enhancer', () => {
         '/foo': { foo: 'bar' },
       };
       expect(() => {
-        enhancer(history)(routes);
+        middleware(history)(routes);
       }).toThrowError(TypeError);
     });
 
     it('throws an error when routes is not an object', () => {
       const routes = 'ooops';
       expect(() => {
-        enhancer(history)(routes);
+        middleware(history)(routes);
       }).toThrow();
     });
   });
@@ -59,11 +59,7 @@ describe('enhancer', () => {
     beforeEach(() => {
       lastAction = null;
       history = createHistory();
-      store = createStore(reducer, enhancer(history)(routes));
-    });
-
-    it('adds "location" helper property', () => {
-      expect(store).toHaveProperty('location', history.location);
+      store = createStore(reducer, applyMiddleware(middleware(history)(routes)));
     });
 
     it('dispatches action when store is created', () => {

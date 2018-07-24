@@ -1,7 +1,7 @@
 import createHistory from 'history/createMemoryHistory';
-import enhancer from './enhancer';
+import middleware from './middleware';
 
 export default function(routes, options) {
   const history = createHistory(options);
-  return enhancer(history)(routes);
+  return middleware(history)(routes);
 }

@@ -19,7 +19,7 @@ function normaliseAction(action) {
 }
 
 function newAction(action, params = {}) {
-  return Object.assign({}, action, params);
+  return { ...action, ...params };
 }
 
 function findPattern(patterns, path, { strict, exact, sensitive }) {
@@ -51,38 +51,26 @@ export default history => routes => {
     return action ? newAction(action, match.params) : null;
   };
 
-  return createStore => (...args) => {
+  return ({ dispatch, getState }) => {
     const actionForCurrencyPath = actionFor(history.location.pathname);
-    const store = createStore(...args);
-    const dispatch = (action, ...args) => {
-      const result = store.dispatch(action, ...args);
-      const path = pathFor(action);
-
-      if (path !== null) {
-        history[action.replace ? 'replace' : 'push'](path);
-      }
-
-      return result;
-    };
-
-    store.dispatch(actionForCurrencyPath);
+    dispatch(actionForCurrencyPath);
 
     history.listen(location => {
       const action = actionFor(location.pathname);
 
       if (action) {
-        store.dispatch(action);
+        dispatch(action);
       }
     });
 
-    return Object.assign({}, store, {
-      dispatch,
-      pathFor,
-      actionFor,
+    return next => action => {
+      const path = pathFor(action);
 
-      get location() {
-        return history.location;
+      if (path !== null && history.location.pathname !== path) {
+        history[action.replace ? 'replace' : 'push'](path);
       }
-    });
+
+      return next(action);
+    };
   };
 };
