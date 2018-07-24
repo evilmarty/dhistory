@@ -44,37 +44,44 @@ describe('enhancer', () => {
     });
   });
 
-  describe('store enhancer', () => {
-    const reducer = (state = {}, action) => {
-      lastAction = action;
-      return state;
-    };
+  describe('store middleware', () => {
+    const reducer = (state = [], action) => [action, ...state];
     const routes = {
       '/posts/:id': 'VIEW_POST',
       '/posts': 'VIEW_POSTS',
       '/': 'VIEW_HOME',
     };
-    let store, history, lastAction;
+    let store, history;
 
     beforeEach(() => {
-      lastAction = null;
       history = createHistory();
       store = createStore(reducer, applyMiddleware(middleware(history)(routes)));
     });
 
     it('dispatches action when history state changes', () => {
       history.push('/posts');
+      const [ lastAction ] = store.getState();
       expect(lastAction).toEqual({ type: 'VIEW_POSTS' });
     });
 
     it('dispatches action with parameters when history state changes', () => {
       history.push('/posts/1');
+      const [ lastAction ] = store.getState();
       expect(lastAction).toEqual({ type: 'VIEW_POST', id: '1' });
     });
 
     it('updates the history location when an action is dispatched associated to a route', () => {
       store.dispatch({ type: 'VIEW_POST', id: 3 });
       expect(history.location.pathname).toEqual('/posts/3');
+    });
+
+    it('does not dispatch more than one action when history is updated', () => {
+      const action = { type: 'VIEW_POST', id: 3 };
+      const previousState = store.getState();
+      const expectedState = [action, ...previousState];
+      store.dispatch(action);
+      const currentState = store.getState();
+      expect(currentState).toEqual(expectedState);
     });
 
     it('skips updating history when route is not found', () => {
@@ -84,9 +91,10 @@ describe('enhancer', () => {
     });
 
     it('does not dispatch action for unknown history location', () => {
-      const previousAction = lastAction;
+      const previousState = store.getState();
       history.push('/unknown');
-      expect(lastAction).toEqual(previousAction);
+      const currentState = store.getState();
+      expect(currentState).toEqual(previousState);
     });
   });
 });

@@ -52,19 +52,27 @@ export default history => routes => {
   };
 
   return ({ dispatch, getState }) => {
-    history.listen(location => {
-      const action = actionFor(location.pathname);
+    let unlisten;
 
-      if (action) {
-        dispatch(action);
-      }
-    });
+    const listen = () => {
+      unlisten = history.listen(location => {
+        const action = actionFor(location.pathname);
+
+        if (action) {
+          dispatch(action);
+        }
+      });
+    };
+
+    listen();
 
     return next => action => {
       const path = pathFor(action);
 
       if (path !== null && history.location.pathname !== path) {
+        unlisten();
         history[action.replace ? 'replace' : 'push'](path);
+        listen();
       }
 
       return next(action);
