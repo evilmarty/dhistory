@@ -11,7 +11,7 @@ npm install -s dhistory
 
 ```
 
-Or via `jest`:
+Or via `yarn`:
 
 ```shell
 yarn add dhistory
